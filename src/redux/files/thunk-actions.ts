@@ -23,8 +23,7 @@ export const renameFileAPI = async (postData: {
 export const fetchFiles = createAsyncThunk(
   "files/fetchFiles",
   async (arg: unknown, thunkAPI) => {
-    const response = await fetchFilesAPI();
-    return response.data;
+    return await fetchFilesAPI();
   }
 );
 

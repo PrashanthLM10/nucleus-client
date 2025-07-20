@@ -67,7 +67,7 @@ const filesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchFiles.fulfilled, (state, action) => {
-        state.files = action.payload;
+        state.files = action.payload.data;
         state.fetchingFileState = "success";
       })
       .addCase(fetchFiles.pending, (state, action) => {
