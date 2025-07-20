@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Alert, IconButton, Typography, Snackbar } from "@mui/joy";
 import {
   CloseRounded,
-  Info,
   CheckCircleOutline as CheckCircleIcon,
   WarningAmberOutlined as WarningIcon,
   ReportOutlined as ReportIcon,

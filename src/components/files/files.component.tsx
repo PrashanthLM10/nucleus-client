@@ -16,7 +16,7 @@ import {
 } from "@mui/icons-material";
 import { FileList } from "./files-list.component.tsx";
 import axios from "axios";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState, useRef, type ChangeEvent } from "react";
 import { getAPIURLWithPath } from "../../utils/api-utils.ts";
 import AlertMessage, {
   AlertMessageProps,
@@ -96,6 +96,8 @@ const Files = () => {
   const isAuthenticated = useSelector(selectAuthentication);
   const filesRenderType = useSelector(selectRenderType);
 
+  const ipFileRef = useRef<HTMLInputElement | null>(null);
+
   useEffect(() => {
     if (isAuthenticated) {
       axios.get(`${getAPIURLWithPath("maxFileSize")}`).then((res) => {
@@ -151,6 +153,7 @@ const Files = () => {
             },
           });
           dispatch(fetchFilesAction(""));
+          if (ipFileRef?.current) ipFileRef.current.value = "";
         }
       } catch (error) {
         setNotification({
@@ -244,6 +247,7 @@ const Files = () => {
               type="file"
               hidden
               multiple
+              ref={ipFileRef}
               onChange={(e) => fileSelected(e)}
             />
           </Button>

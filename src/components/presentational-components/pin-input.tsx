@@ -1,7 +1,4 @@
-/* {
-  
-} */
-import { SyntheticEvent, useRef } from "react";
+import { useRef } from "react";
 
 interface PinInputProps {
   length: number;
@@ -71,6 +68,7 @@ export const PinInput = (props: PinInputProps) => {
     <section className="flex justify-center items-center gap-2">
       {valuesArr.map((value, idx) => (
         <input
+          key={`pin-input-${idx}`}
           value={value}
           onChange={(e) => inputChanged(e, idx)}
           onKeyDown={(e) => keyDownEvent(e, idx)}

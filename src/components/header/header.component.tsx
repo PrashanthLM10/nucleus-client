@@ -1,5 +1,4 @@
-import { CardOverflow, Card, CardContent, Typography } from "@mui/joy";
-import { Outlet } from "react-router";
+import { Card, CardContent, Typography } from "@mui/joy";
 
 const Header = function () {
   return (
