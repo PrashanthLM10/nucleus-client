@@ -32,7 +32,6 @@ const getFileImage = (fileName: string, file: FileType) => {
 };
 
 export const FilesGridComponent = ({
-  setNotification,
   files = [],
   totalSize,
   actions,

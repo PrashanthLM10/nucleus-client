@@ -4,6 +4,7 @@ import {
   FileType,
   ErrorTypeString,
   APIStatus,
+  NotificationProps,
 } from "../../components/files/files.types";
 import {
   fetchFiles,
@@ -22,6 +23,7 @@ interface FilesState {
     error: TypeError | null;
     fileName?: string | "";
   };
+  notification: NotificationProps | null;
 }
 
 const initialState: FilesState = {
@@ -31,6 +33,7 @@ const initialState: FilesState = {
   fetchingError: { type: "", error: null },
   deleteFileStatus: "idle",
   renameFileStatus: "idle",
+  notification: null,
 } satisfies FilesState;
 
 const filesSlice = createSlice({
@@ -55,6 +58,12 @@ const filesSlice = createSlice({
       );
       if (file) file.Name = action.payload.newName;
     },
+    setNotification: (
+      state: FilesState,
+      action: PayloadAction<NotificationProps | null>
+    ) => {
+      state.notification = action.payload;
+    },
   },
   selectors: {
     selectRenderType: (state) => state.filesRenderType,
@@ -63,6 +72,7 @@ const filesSlice = createSlice({
     selectFetchingError: (state) => state.fetchingError,
     selectDeleteFileStatus: (state) => state.deleteFileStatus,
     selectRenameFileStatus: (state) => state.renameFileStatus,
+    selectNotification: (state) => state.notification,
   },
   extraReducers: (builder) => {
     builder
@@ -118,7 +128,7 @@ const filesSlice = createSlice({
   },
 });
 
-export const { changeRenderType } = filesSlice.actions;
+export const { changeRenderType, setNotification } = filesSlice.actions;
 export const {
   selectRenderType,
   selectFiles,
@@ -126,6 +136,7 @@ export const {
   selectFetchingError,
   selectDeleteFileStatus,
   selectRenameFileStatus,
+  selectNotification,
 } = filesSlice.selectors;
 export const fetchFilesAction = fetchFiles;
 export const deleteFileAction = deleteFileThunkAction;

@@ -16,27 +16,44 @@ import {
 } from "@mui/icons-material";
 import { FileList } from "./files-list.component.tsx";
 import axios from "axios";
-import { useEffect, useState, useRef, type ChangeEvent } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  type ChangeEvent,
+  useCallback,
+} from "react";
 import { getAPIURLWithPath } from "../../utils/api-utils.ts";
 import AlertMessage, {
   AlertMessageProps,
 } from "../presentational-components/alert.tsx";
-import { useAppSelector as useSelector } from "../../redux/store.ts";
 import {
   selectRenderType,
   changeRenderType,
   fetchFilesAction,
+  setNotification,
+  selectNotification,
 } from "../../redux/files/slice.ts";
-import { useAppDispatch as useDispatch } from "../../redux/store.ts";
+import {
+  useAppSelector as useSelector,
+  useAppDispatch as useDispatch,
+} from "../../redux/store.ts";
 
 import { UploadProgress, NotificationProps } from "./files.types.ts";
 import { selectAuthentication } from "../../redux/login/slice.ts";
 import { Navigate } from "react-router";
 
-const NotificationContent = (props: NotificationProps | null) => {
-  if (!props) return null;
+const NotificationContent = () => {
+  const dispatch = useDispatch();
+  const notification = useSelector(selectNotification);
+  const handleAlertClose = useCallback(
+    () => dispatch(setNotification(null)),
+    []
+  );
 
-  const { type, data } = props;
+  if (!notification) return null;
+
+  const { type, data } = notification;
   // If no data is provided, return null
   if (!data) return null;
 
@@ -65,12 +82,14 @@ const NotificationContent = (props: NotificationProps | null) => {
       );
     }
   }
-
   if (type === "alert") {
     return (
       <>
         <div className="w-2/5 ml-36 md:ml-44 min-w-sm">
-          <AlertMessage {...(data as AlertMessageProps)} />
+          <AlertMessage
+            {...(data as AlertMessageProps)}
+            onAlertClose={handleAlertClose}
+          />
         </div>
       </>
     );
@@ -89,8 +108,6 @@ const notificationContentData = {
 
 const Files = () => {
   const [showAlert, setShowAlert] = useState(true);
-  const [notificationProps, setNotification] =
-    useState<NotificationProps | null>(null);
   const dispatch = useDispatch();
 
   const isAuthenticated = useSelector(selectAuthentication);
@@ -118,10 +135,12 @@ const Files = () => {
       Array.from(files).forEach((file) => formData.append("file", file));
 
       try {
-        setNotification({
-          type: "progress",
-          data: { state: "uploading", value: 0 },
-        });
+        dispatch(
+          setNotification({
+            type: "progress",
+            data: { state: "uploading", value: 0 },
+          })
+        );
         const response = await axios.post(
           `${getAPIURLWithPath("uploadFile")}`,
           formData,
@@ -130,13 +149,15 @@ const Files = () => {
               "Content-Type": "multipart/form-data",
             },
             onUploadProgress: ({ loaded, total }) => {
-              setNotification({
-                type: "progress",
-                data: {
-                  state: "uploading",
-                  value: Math.round((loaded * 100) / (total || 1)),
-                },
-              });
+              dispatch(
+                setNotification({
+                  type: "progress",
+                  data: {
+                    state: "uploading",
+                    value: Math.round((loaded * 100) / (total || 1)),
+                  },
+                })
+              );
             },
           }
         );
@@ -145,27 +166,31 @@ const Files = () => {
         if (response.status !== 200) {
           throw new Error(`Upload failed with status ${response.status}`);
         } else {
-          setNotification({
-            type: "alert",
-            data: {
-              alertType: "success",
-              description: "File uploaded successfully!",
-            },
-          });
+          dispatch(
+            setNotification({
+              type: "alert",
+              data: {
+                alertType: "success",
+                description: "File uploaded successfully!",
+              },
+            })
+          );
           dispatch(fetchFilesAction(""));
           if (ipFileRef?.current) ipFileRef.current.value = "";
         }
       } catch (error) {
-        setNotification({
-          type: "alert",
-          data: {
-            alertType: "danger",
-            title: "Upload Failed",
-            description: `File upload failed: ${
-              error instanceof Error ? error.message : "Unknown error"
-            }`,
-          },
-        });
+        dispatch(
+          setNotification({
+            type: "alert",
+            data: {
+              alertType: "danger",
+              title: "Upload Failed",
+              description: `File upload failed: ${
+                error instanceof Error ? error.message : "Unknown error"
+              }`,
+            },
+          })
+        );
         console.error("Error uploading file:", error);
       }
     }
@@ -202,7 +227,7 @@ const Files = () => {
       </section>
       <section className="flex justify-end mx-4 mt-10 mb-4 md:mb-1 items-center">
         <section className="flex-[2] flex justify-center">
-          <NotificationContent {...(notificationProps as NotificationProps)} />
+          <NotificationContent />
         </section>
         <section className="">
           <IconButton
@@ -264,7 +289,7 @@ const Files = () => {
         Files
       </Divider>
       <section className={`m-4 flex-grow`}>
-        <FileList setNotification={setNotification} />
+        <FileList />
       </section>
     </section>
   );

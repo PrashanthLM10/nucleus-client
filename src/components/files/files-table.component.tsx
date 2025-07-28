@@ -4,7 +4,6 @@ import type { FilesTableComponentProps, FileType } from "./files.types";
 
 export const FilesTableComponent = ({
   files,
-  setNotification,
   totalSize,
   actions,
 }: FilesTableComponentProps) => {

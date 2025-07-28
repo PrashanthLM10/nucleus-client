@@ -2,10 +2,16 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import type { FileType } from "../../components/files/files.types";
 import { getAPIURLWithPath } from "../../utils/api-utils";
+import { fetchFilesSample } from "../../utils/sample-data";
 
 //API's
 export const fetchFilesAPI = async () => {
   return axios.get<FileType[]>(`${getAPIURLWithPath("getAllFiles")}`);
+
+  // Mock: Respond with MockData
+  /* return new Promise((res, rej) => {
+    setTimeout(() => res(fetchFilesSample), 2000);
+  }); */
 };
 
 export const deleteFileAPI = async (fileName: string) => {
@@ -17,6 +23,11 @@ export const renameFileAPI = async (postData: {
   newName: string;
 }) => {
   return axios.post(`${getAPIURLWithPath("renameFile")}`, postData);
+
+  // Mock: Respond with MockData
+  /* return new Promise((res, rej) => {
+    setTimeout(() => res({ status: 200 }), 2000);
+  }); */
 };
 
 // Thunk actions

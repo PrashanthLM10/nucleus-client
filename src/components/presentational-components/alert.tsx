@@ -12,15 +12,16 @@ export interface AlertMessageProps {
   alertType: "success" | "danger" | "warning" | "primary";
   title?: string | null;
   description?: string | null;
+  onAlertClose?: () => void;
 }
 
 const AlertMessage = ({
   alertType,
   title,
   description,
+  onAlertClose = () => {},
   ...rest
 }: AlertMessageProps) => {
-  const [showAlert, setShowAlert] = useState(true);
   const titleText =
     !title && !description
       ? alertType.charAt(0).toUpperCase() + alertType.slice(1)
@@ -36,7 +37,7 @@ const AlertMessage = ({
   const { color, icon } =
     alertValues.find((alert) => alert.color === alertType) || alertValues[3];
 
-  return showAlert ? (
+  return (
     <>
       <div className="hidden lg:block">
         <Alert
@@ -55,7 +56,7 @@ const AlertMessage = ({
             <IconButton
               variant="soft"
               color={color as AlertMessageProps["alertType"]}
-              onClick={() => setShowAlert(false)}
+              onClick={() => onAlertClose()}
             >
               <CloseRounded />
             </IconButton>
@@ -79,7 +80,7 @@ const AlertMessage = ({
           autoHideDuration={6000}
           onClose={(event, reason) => {
             if (reason === "clickaway") {
-              setShowAlert(false);
+              onAlertClose();
               return;
             }
           }}
@@ -92,7 +93,7 @@ const AlertMessage = ({
         </Snackbar>
       </div>
     </>
-  ) : null;
+  );
 };
 
 export default AlertMessage;

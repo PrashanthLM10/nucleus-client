@@ -19,14 +19,12 @@ export interface FileType {
 }
 
 export interface FilesListProps {
-  setNotification: (notification: NotificationProps) => void;
   totalSize?: string;
   pending?: boolean;
 }
 
 export interface FilesGridComponentProps {
   files: FileType[];
-  setNotification: (notification: NotificationProps) => void;
   totalSize: string;
   actions: {
     setDeleteData: (data: ActionData) => void;
@@ -36,7 +34,6 @@ export interface FilesGridComponentProps {
 
 export interface FilesTableComponentProps {
   files: FileType[];
-  setNotification: (notification: NotificationProps) => void;
   totalSize: string;
   actions: {
     setDeleteData: (data: ActionData) => void;

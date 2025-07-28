@@ -31,6 +31,7 @@ import {
   selectRenameFileStatus,
   deleteFileAction,
   renameFileAction,
+  setNotification,
 } from "../../redux/files/slice";
 import {
   useAppSelector as useSelector,
@@ -169,13 +170,15 @@ export const FileList = (props: FilesListProps) => {
   }
 
   if (showSuccessNotification) {
-    props.setNotification({
-      type: "alert",
-      data: {
-        alertType: "success",
-        description: successMessage,
-      },
-    });
+    dispatch(
+      setNotification({
+        type: "alert",
+        data: {
+          alertType: "success",
+          description: successMessage,
+        },
+      })
+    );
 
     if (renameFileData.lastActionCalled)
       setRenameData({ ...renameFileData, lastActionCalled: false });
@@ -186,16 +189,18 @@ export const FileList = (props: FilesListProps) => {
   // show error state
   if (fetchingFilesStatus === "error") {
     console.error("API Error:", fetchingError);
-    props.setNotification({
-      type: "alert",
-      data: {
-        alertType: "danger",
-        description:
-          fetchingError?.error?.message ||
-          getErrorMessage(fetchingError.type, fetchingError.fileName || "") ||
-          "API Error",
-      },
-    });
+    dispatch(
+      setNotification({
+        type: "alert",
+        data: {
+          alertType: "danger",
+          description:
+            fetchingError?.error?.message ||
+            getErrorMessage(fetchingError.type, fetchingError.fileName || "") ||
+            "API Error",
+        },
+      })
+    );
   }
 
   const { files, totalSize } = addFileSize([...filesData]);
