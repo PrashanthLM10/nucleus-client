@@ -235,7 +235,11 @@ export const FilesGridComponent = ({
           <ModalClose />
           <DialogTitle>{imageToShow?.Name}</DialogTitle>
           <DialogContent>
-            <img src={imageToShow?.URL} alt="Full Size" />
+            <img
+              className="max-h-[80vh]"
+              src={imageToShow?.URL}
+              alt="Full Size"
+            />
           </DialogContent>
           <DialogActions>
             <Button
