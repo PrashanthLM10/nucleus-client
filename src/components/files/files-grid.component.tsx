@@ -13,6 +13,8 @@ import {
   ModalClose,
   DialogContent,
   DialogTitle,
+  DialogActions,
+  Button,
 } from "@mui/joy";
 import { DeleteOutline, DriveFileRenameOutline } from "@mui/icons-material";
 import { useState } from "react";
@@ -20,9 +22,10 @@ import type { FilesGridComponentProps, FileType } from "./files.types";
 
 const getFileExtension = (fileName: string) => {
   return fileName.split(".").pop()?.toLowerCase();
-}
+};
 
-const isImage = (extension: string) => ['jpg', 'jpeg', 'png', 'gif'].indexOf(extension) > -1;
+const isImage = (extension: string) =>
+  ["jpg", "jpeg", "png", "gif"].indexOf(extension) > -1;
 
 // getting image to show in card according to file type
 const getFileImage = (fileName: string, file: FileType) => {
@@ -49,22 +52,29 @@ export const FilesGridComponent = ({
 }: FilesGridComponentProps) => {
   const [showFileOptions, setShowFileOptions] = useState<boolean>(false);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
-  const [imageToShow, setImageToShow] = useState<string>("");
+  const [imageToShow, setImageToShow] = useState<FileType | null>(null);
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, file: FileType) => {
-    if(isImage(getFileExtension(file.Name) || '')) {
-      
+  const handleLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    file: FileType
+  ) => {
+    if (isImage(getFileExtension(file.Name) || "")) {
       // Prevent the default link behavior
       e.preventDefault();
-      showImage(file.URL);
+      showImage(file);
       return;
     }
-  }
+  };
 
-  const showImage = (url :string) => {
+  const showImage = (file: FileType) => {
     setShowImageModal(true);
-    setImageToShow(url);
-  }
+    setImageToShow(file);
+  };
+
+  const handleImageModalClose = (data: any) => {
+    setShowImageModal(false);
+    setImageToShow(null);
+  };
 
   return (
     <>
@@ -103,7 +113,7 @@ export const FilesGridComponent = ({
                     className="truncate w-full font-medium"
                     href={file.URL}
                     color="neutral"
-                    onClick= {(e) => handleLinkClick(e, file)}
+                    onClick={(e) => handleLinkClick(e, file)}
                   >
                     <Typography
                       level="title-md"
@@ -208,13 +218,36 @@ export const FilesGridComponent = ({
           </Grid>
         ))}
       </Grid>
-      <Modal open={showImageModal} onClose={() => {}}>
-        <ModalDialog variant={'plain'}>
+      <Modal
+        open={showImageModal}
+        onClose={(data) => {
+          handleImageModalClose(data);
+        }}
+      >
+        <ModalDialog variant={"plain"}>
           <ModalClose />
-          <DialogTitle>Modal Dialog</DialogTitle>
+          <DialogTitle>{imageToShow?.Name}</DialogTitle>
           <DialogContent>
-            <img src={imageToShow} alt="Full Size" />
+            <img src={imageToShow?.URL} alt="Full Size" />
           </DialogContent>
+          <DialogActions>
+            <Button
+              variant="solid"
+              component="a"
+              href={imageToShow?.URL}
+              color="primary"
+              download
+            >
+              Download
+            </Button>
+            <Button
+              variant="plain"
+              color="neutral"
+              onClick={handleImageModalClose}
+            >
+              Cancel
+            </Button>
+          </DialogActions>
         </ModalDialog>
       </Modal>
     </>
