@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogActions,
   Button,
+  Snackbar,
 } from "@mui/joy";
 import { DeleteOutline, DriveFileRenameOutline } from "@mui/icons-material";
 import { useState } from "react";
@@ -53,6 +54,8 @@ export const FilesGridComponent = ({
   const [showFileOptions, setShowFileOptions] = useState<boolean>(false);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [imageToShow, setImageToShow] = useState<FileType | null>(null);
+  const [showDownloadSnackbar, setShowDownloadSnackbar] =
+    useState<boolean>(false);
 
   const handleLinkClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -74,6 +77,10 @@ export const FilesGridComponent = ({
   const handleImageModalClose = (data: any) => {
     setShowImageModal(false);
     setImageToShow(null);
+  };
+
+  const handleDownloadClick = () => {
+    setShowDownloadSnackbar(true);
   };
 
   return (
@@ -237,12 +244,13 @@ export const FilesGridComponent = ({
               href={imageToShow?.URL}
               color="primary"
               download
+              onClick={handleDownloadClick}
             >
               Download
             </Button>
             <Button
               variant="plain"
-              color="neutral"
+              color="danger"
               onClick={handleImageModalClose}
             >
               Cancel
@@ -250,6 +258,16 @@ export const FilesGridComponent = ({
           </DialogActions>
         </ModalDialog>
       </Modal>
+      <Snackbar
+        variant="soft"
+        color="primary"
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={showDownloadSnackbar}
+        onClose={() => setShowDownloadSnackbar(false)}
+      >
+        Download started! Please check your downloads folder.
+      </Snackbar>
     </>
   );
 };
