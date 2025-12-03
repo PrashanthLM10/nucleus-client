@@ -13,9 +13,15 @@ import { DeleteOutline, DriveFileRenameOutline } from "@mui/icons-material";
 import { useState } from "react";
 import type { FilesGridComponentProps, FileType } from "./files.types";
 
+const getFileExtension = (fileName: string) => {
+  return fileName.split(".").pop()?.toLowerCase();
+}
+
+const isImage = (extension: string) => ['jpg', 'jpeg', 'png', 'gif'].indexOf(extension) > -1;
+
 // getting image to show in card according to file type
 const getFileImage = (fileName: string, file: FileType) => {
-  const fileExtension = fileName.split(".").pop()?.toLowerCase();
+  const fileExtension = getFileExtension(fileName);
   switch (fileExtension) {
     case "jpg":
     case "jpeg":
@@ -37,6 +43,15 @@ export const FilesGridComponent = ({
   actions,
 }: FilesGridComponentProps) => {
   const [showFileOptions, setShowFileOptions] = useState<boolean>(false);
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, fileName: string) => {
+    if(isImage(getFileExtension(fileName) || '')) {
+      
+      // Prevent the default link behavior
+      e.preventDefault();
+      return;
+    }
+  }
 
   return (
     <>
@@ -75,6 +90,7 @@ export const FilesGridComponent = ({
                     className="truncate w-full font-medium"
                     href={file.URL}
                     color="neutral"
+                    onClick= {(e) => handleLinkClick(e, file.Name)}
                   >
                     <Typography
                       level="title-md"
