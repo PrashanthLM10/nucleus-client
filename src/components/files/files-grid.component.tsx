@@ -8,6 +8,11 @@ import {
   Tooltip,
   Grid,
   IconButton,
+  Modal,
+  ModalDialog,
+  ModalClose,
+  DialogContent,
+  DialogTitle,
 } from "@mui/joy";
 import { DeleteOutline, DriveFileRenameOutline } from "@mui/icons-material";
 import { useState } from "react";
@@ -43,14 +48,22 @@ export const FilesGridComponent = ({
   actions,
 }: FilesGridComponentProps) => {
   const [showFileOptions, setShowFileOptions] = useState<boolean>(false);
+  const [showImageModal, setShowImageModal] = useState<boolean>(false);
+  const [imageToShow, setImageToShow] = useState<string>("");
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, fileName: string) => {
-    if(isImage(getFileExtension(fileName) || '')) {
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, file: FileType) => {
+    if(isImage(getFileExtension(file.Name) || '')) {
       
       // Prevent the default link behavior
       e.preventDefault();
+      showImage(file.URL);
       return;
     }
+  }
+
+  const showImage = (url :string) => {
+    setShowImageModal(true);
+    setImageToShow(url);
   }
 
   return (
@@ -90,7 +103,7 @@ export const FilesGridComponent = ({
                     className="truncate w-full font-medium"
                     href={file.URL}
                     color="neutral"
-                    onClick= {(e) => handleLinkClick(e, file.Name)}
+                    onClick= {(e) => handleLinkClick(e, file)}
                   >
                     <Typography
                       level="title-md"
@@ -195,6 +208,15 @@ export const FilesGridComponent = ({
           </Grid>
         ))}
       </Grid>
+      <Modal open={showImageModal} onClose={() => {}}>
+        <ModalDialog variant={'plain'}>
+          <ModalClose />
+          <DialogTitle>Modal Dialog</DialogTitle>
+          <DialogContent>
+            <img src={imageToShow} alt="Full Size" />
+          </DialogContent>
+        </ModalDialog>
+      </Modal>
     </>
   );
 };
