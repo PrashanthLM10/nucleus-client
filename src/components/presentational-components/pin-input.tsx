@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { SyntheticEvent, useRef } from "react";
 
 interface PinInputProps {
   length: number;
@@ -64,6 +64,11 @@ export const PinInput = (props: PinInputProps) => {
     }, 100);
   };
 
+  const handleFocus = (e: SyntheticEvent) => {
+    const target = e.target as HTMLInputElement;
+    target.select();
+  };
+
   return (
     <section className="flex justify-center items-center gap-2">
       {valuesArr.map((value, idx) => (
@@ -77,6 +82,8 @@ export const PinInput = (props: PinInputProps) => {
           type={props.mask ? "password" : "number"}
           autoFocus={props.autoFocus && idx === 0 ? true : false}
           autoComplete="new-password"
+          maxLength={1}
+          onFocus={handleFocus}
           ref={(element) => {
             if (element) {
               inputRefs.current[idx] = element;
